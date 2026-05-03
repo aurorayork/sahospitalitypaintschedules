@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SA Hospitality Paint Schedules</title>
+  <style>
+    :root {
+      --ink: #1f2933;
+      --muted: #667085;
+      --line: #d8dee8;
+      --paper: #fffdf8;
+      --soft: #f7f4ed;
+      --sa-rose: #f48b7f;
+      --sa-peach: #fdd5bc;
+      --sa-blush: #faede1;
+      --sa-gilt: #ac936d;
+      --sa-blue: #5aa6e5;
+      --fe-red: #c43632;
+      --fe-green: #124718;
+      --fe-gold: #bc985e;
+      --fe-stone: #e8e1d1;
+      --missing: #f0f1f3;
+      --shadow: 0 18px 45px rgba(31, 41, 51, .10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(244, 139, 127, .11), transparent 320px),
+        linear-gradient(90deg, rgba(188, 152, 94, .10), rgba(90, 166, 229, .08)),
+        var(--paper);
+      font-family: Inter, Avenir Next, Avenir, Helvetica, Arial, sans-serif;
+      line-height: 1.35;
+    }
+
+    a { color: inherit; }
+
+    .page {
+      width: min(1320px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 24px 0 60px;
+    }
+
+    .hero {
+      border: 1px solid rgba(31, 41, 51, .12);
+      background: rgba(255, 255, 255, .78);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, Times New Roman, serif;
+      font-size: clamp(32px, 4.5vw, 54px);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      margin: 14px 0 0;
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .brand-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .summary-block,
+    .schedule-card {
+      background: white;
+      border: 1px solid rgba(31, 41, 51, .16);
+      box-shadow: 0 12px 28px rgba(31, 41, 51, .08);
+    }
+
+    .summary-block.sa {
+      border: 4px solid var(--sa-peach);
+      background: white;
+    }
+
+    .schedule-card.sa {
+      border: 4px solid var(--sa-peach);
+    }
+
+    .summary-block.fe {
+      border: 3px solid var(--fe-green);
+      background: white;
+    }
+
+    .schedule-card.fe {
+      border: 3px solid var(--fe-green);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 16px;
+      color: white;
+      font-family: Georgia, Times New Roman, serif;
+      font-weight: 800;
+      font-size: 24px;
+      text-transform: uppercase;
+    }
+
+    .brand-title.sa {
+      background: var(--sa-rose);
+      color: var(--sa-blush);
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .brand-title.fe {
+      background: var(--fe-green);
+      color: var(--fe-red);
+      text-shadow: 1px 1px 0 var(--fe-gold);
+      letter-spacing: .18em;
+    }
+
+    .brand-name {
+      display: block;
+      line-height: 1;
+    }
+
+    .brand-summary-label {
+      display: block;
+      margin-top: 4px;
+      font: 800 10px/1 Inter, Avenir Next, Avenir, Helvetica, Arial, sans-serif;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-shadow: none;
+    }
+
+    .count-pill {
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font: 800 10px/1 Inter, sans-serif;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.32);
+      white-space: nowrap;
+    }
+
+    .location-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: white;
+      padding: 0;
+    }
+
+    .summary-block.sa .location-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      padding: 8px;
+      background: white;
+    }
+
+    .summary-block.fe .location-grid {
+      gap: 1px;
+      padding: 8px;
+      background: white;
+    }
+
+    .location-row {
+      min-height: 42px;
+      padding: 8px 10px;
+      background: white;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .summary-block.sa .location-row {
+      min-height: 42px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      background: white;
+      border: 1px solid var(--sa-peach);
+      color: var(--sa-rose);
+      position: static;
+      padding-right: 13px;
+    }
+
+    .location-row strong {
+      display: block;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .summary-block.fe .location-row {
+      min-height: 42px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      background: white;
+      border: 1px solid var(--fe-green);
+      color: var(--fe-green);
+    }
+    .location-row small { color: var(--muted); }
+    .summary-block.sa .location-row small { color: #9d5f58; }
+    .summary-block.fe .location-row small { color: var(--muted); }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+
+    .summary-block.sa .status {
+      position: static;
+      justify-self: end;
+      margin-top: 0;
+      min-width: 74px;
+      padding: 6px 8px;
+      font-size: 10px;
+    }
+
+    .status.available { background: #fff176; color: #151515; border-color: #e9da47; }
+    .summary-block.sa .status.available {
+      background: var(--sa-blush);
+      color: var(--sa-rose);
+      border-color: var(--sa-peach);
+    }
+    .summary-block.sa .status.missing {
+      background: var(--missing);
+      color: #525866;
+      border-color: #d6dae1;
+    }
+    .summary-block.fe .status.available { background: #dcefd6; color: var(--fe-green); border-color: #bdddb2; }
+    .status.missing { background: var(--missing); color: #525866; border-color: #d6dae1; }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      margin: 12px 0 0;
+      padding: 8px;
+      border: 1px solid rgba(31, 41, 51, .12);
+      background: rgba(255, 253, 248, .9);
+      backdrop-filter: blur(10px);
+      display: grid;
+      gap: 7px;
+      overflow: visible;
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 7px;
+      overflow: hidden;
+    }
+
+    .chip {
+      text-decoration: none;
+      white-space: nowrap;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 41, 51, .18);
+      background: white;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .chip.sa { border-color: rgba(172,147,109,.5); background: var(--sa-blush); }
+    .chip.fe { border-color: rgba(18,71,24,.35); background: var(--fe-stone); color: var(--fe-green); }
+
+    .brand-section {
+      margin-top: 28px;
+      display: grid;
+      gap: 22px;
+    }
+
+    #sa-cards,
+    #fe-cards {
+      display: grid;
+      gap: 28px;
+    }
+
+    .section-heading {
+      margin: 0;
+      padding: 12px 16px;
+      font-family: Georgia, Times New Roman, serif;
+      font-size: 30px;
+      border-left: 10px solid;
+      background: rgba(255,255,255,.72);
+    }
+
+    .section-heading.sa { border-color: var(--sa-peach); }
+    .section-heading.fe { border-color: var(--fe-green); }
+
+    .schedule-card {
+      overflow: hidden;
+      scroll-margin-top: 92px;
+    }
+
+    .schedule-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .schedule-head.sa { background: var(--sa-rose); }
+    .schedule-head.fe { background: var(--fe-green); }
+
+    .logo-word {
+      margin: 0;
+      font-family: Georgia, Times New Roman, serif;
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .logo-word.sa {
+      display: inline-block;
+      border: 0;
+      padding: 7px 12px;
+      background: var(--sa-rose);
+      color: var(--sa-blush);
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .schedule-head.sa .subline,
+    .schedule-head.sa .date-badge {
+      color: var(--sa-blush);
+    }
+
+    .logo-word.fe {
+      display: inline-block;
+      border: 3px solid var(--fe-green);
+      padding: 7px 12px;
+      color: var(--fe-red);
+      background: var(--fe-green);
+      text-shadow: 1px 1px 0 var(--fe-gold);
+      letter-spacing: .18em;
+      white-space: nowrap;
+    }
+
+    .schedule-head.fe .subline,
+    .schedule-head.fe .date-badge {
+      color: var(--fe-stone);
+    }
+
+    .subline {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .date-badge {
+      justify-self: end;
+      align-self: start;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+      background: rgba(255,255,255,.22);
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 840px;
+      table-layout: fixed;
+    }
+
+    th {
+      padding: 10px 8px;
+      background: #f0f0f0;
+      border: 1px solid #252525;
+      color: #101010;
+      font-size: 9px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    td {
+      padding: 12px 10px;
+      border: 1px solid #686868;
+      vertical-align: middle;
+      font-size: 11px;
+      background: #fff;
+      text-align: left;
+    }
+
+    td.center { text-align: left; }
+    td.vendor { width: 120px; }
+    td.color { font-weight: 800; text-align: left; }
+    td.directions { font-size: 10px; text-transform: uppercase; }
+
+    .paint-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      justify-content: flex-start;
+    }
+
+    .swatch {
+      width: 64px;
+      height: 38px;
+      border: 1px solid rgba(31, 41, 51, .22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+      background: linear-gradient(135deg, #eee, #ccc);
+    }
+
+    .swatch.multi {
+      width: 100px;
+      background: linear-gradient(90deg, #ede2d3 0 20%, #d8be85 20% 40%, #315337 40% 60%, #d5ad76 60% 80%, #5f2c42 80% 100%);
+    }
+
+    .swatch.empty {
+      background: repeating-linear-gradient(45deg, #f7f7f7, #f7f7f7 8px, #ececec 8px, #ececec 16px);
+    }
+
+    .swatch-img {
+      display: block;
+      max-width: 112px;
+      max-height: 70px;
+      object-fit: contain;
+    }
+
+    .swatch-label {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .website {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 68px;
+      border: 1px solid rgba(31, 41, 51, .18);
+      border-radius: 999px;
+      padding: 7px 9px;
+      background: var(--ink);
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .website.sa { background: var(--sa-blue); color: #07131f; }
+    .website.fe { background: var(--fe-green); }
+
+    .missing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .missing-card {
+      padding: 14px;
+      border: 1px dashed #b8bec8;
+      background: rgba(240, 241, 243, .72);
+      color: #525866;
+    }
+
+    .missing-card strong { display: block; color: var(--ink); }
+    .footnote {
+      margin-top: 28px;
+      padding: 18px;
+      border: 1px solid rgba(31, 41, 51, .12);
+      background: white;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .page { width: min(100% - 24px, 1320px); padding-top: 18px; }
+      .brand-summary { grid-template-columns: 1fr; }
+      .location-grid { grid-template-columns: 1fr; }
+      .schedule-head { grid-template-columns: 1fr; }
+      .date-badge { justify-self: start; }
+    }
+
+    @media print {
+      body { background: white; }
+      .toolbar { display: none; }
+      .page { width: 100%; padding: 0; }
+      .schedule-card { break-inside: avoid; box-shadow: none; margin-bottom: 18px; }
+      .hero, .summary-block, .footnote { box-shadow: none; }
+      .website { color: #0645ad; background: transparent; border-color: #0645ad; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1>SA Hospitality Paint Schedules</h1>
+      <nav class="toolbar" id="toolbar" aria-label="Restaurant quick links"></nav>
+      <section class="brand-summary" id="summary"></section>
+    </header>
+
+    <section class="brand-section">
+      <h2 class="section-heading sa">Sant Ambroeus</h2>
+      <div id="sa-cards"></div>
+    </section>
+
+    <section class="brand-section">
+      <h2 class="section-heading fe">Felice</h2>
+      <div id="fe-cards"></div>
+    </section>
+
+  </main>
+
+  <script>
+    const links = {
+      domingueLime: "https://www.dominguefinishes.com/lime-wash",
+      dominguePalette: "https://www.dominguefinishes.com/colorpalette",
+      dominguePlasters: "https://www.dominguefinishes.com/plasters-color-palette",
+      dauphin: "https://www.dominguefinishes.com/search?q=DAUPHIN",
+      espalier: "https://www.dominguefinishes.com/search?q=ESPALIER",
+      panier: "https://www.dominguefinishes.com/search?q=PANIER",
+      fineBrilliant: "https://finepaintsofeurope.com/shop/hollandlac-brilliant-98/?srsltid=AfmBOooO994tgDJLg2YlLQywWvTXPDmj-414_vL-epJAuy9uqvkJcHsK",
+      decoratorsWhite: "https://www.benjaminmoore.com/en-us/paint-colors/color/oc-149/decorators-white",
+      earthlyRusset: "https://www.benjaminmoore.com/en-us/paint-colors/color/2173-10/earthly-russet",
+      cromwell: "https://www.benjaminmoore.com/en-us/paint-colors/color/hc-103/cromwell-gray",
+      bedBreakfast: "https://www.benjaminmoore.com/en-us/paint-colors/color/cc-184/bed-and-breakfast",
+      bermuda: "https://www.benjaminmoore.com/en-us/paint-colors/color/2100-60/bermuda-sands",
+      webster: "https://www.benjaminmoore.com/en-us/paint-colors/color/hc-130/webster-green",
+      avon: "https://www.benjaminmoore.com/en-us/paint-colors/color/hc-126/avon-green",
+      dimity: "https://www.farrow-ball.com/us/paint/dimity?sku=5029496280845&gad_source=1&gclid=CjwKCAjwk8e1BhALEiwAc8MHiGya9vuh4sw84E9aIihum9UbvcX4jAGorlrP8TPCEV7VDhdTdSsUzhoC5dMQAvD_BwE",
+      silverSatin: "https://www.benjaminmoore.com/en-us/paint-colors/color/oc-26/silver-satin",
+      stormySky: "https://www.benjaminmoore.com/en-us/paint-colors/color/1616/stormy-sky",
+      behrTobacco: "https://www.behr.com/consumer/ColorDetailView/N230-7",
+      meodedPearlas: "https://meodedpaint.com/product/pearlas-velvet-suede-metallic-paint/?location=38-52%20Bartlett%20St,%20Brooklyn%2C%20NY%2011206%2C%20USA&radius=100",
+      turtleGreen: "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/2142-20/turtle-green?color=2142-20",
+      aegeanOlive: "https://www.benjaminmoore.com/en-us/paint-colors/color/1491/aegean-olive",
+      regalN547: "https://miramarpaintcenter.com/products/regal-select-interior-paint-flat-n547",
+      stardust: "https://www.benjaminmoore.com/en-us/color-overview/find-your-color/color/2108-40/stardust?color=2108-40",
+      fpoeRetailers: "https://www.finepaintsofeurope.com/retailers.aspx"
+    };
+
+    const schedules = [
+      {
+        brand: "Sant Ambroeus", branch: "sa", id: "sa-brookfield", restaurant: "Brookfield", date: "",
+        source: "SA-Brookfield.xlsx",
+        rows: [
+          ["", "Hallway", "Base Boards", "Benjamin Moore", "Paint / Satin", "Cromwell Gray HC-103", "Satin", "AURA Advanced; brush painted.", links.cromwell, "assets/brookfield_r3_c7.png"],
+          ["", "Hallway bathrooms (ground floor)", "Upper Walls And Ceiling", "Benjamin Moore", "Paint / Flat", "Bed and Breakfast CC-184", "Flat", "AURA Bath & Spa.", links.bedBreakfast, "assets/brookfield_r4_c7.png"],
+          ["", "Ceilings", "Metal Ceiling Soffit and Soffit Coves", "Benjamin Moore", "Paint / Flat", "Bermuda Sands 2100-60", "Flat", "AURA Advanced.", links.bermuda, "assets/brookfield_r5_c7.png"],
+          ["", "Mezzanine bathrooms", "Upper Walls And Ceiling", "Benjamin Moore", "Paint / Flat", "Webster Green HC-130", "Flat", "AURA Bath & Spa.", links.webster, "assets/brookfield_r6_c7.png"],
+          ["", "Back bar", "MDF Box", "Benjamin Moore", "Paint / Matte", "Bermuda Sands 2100-60", "Matte", "AURA Advanced.", links.bermuda, "assets/brookfield_r7_c7.png"],
+          ["", "Walls", "Cafe, dining room and mezz plaster wall", "Domingue Finishes", "Limewash Paint", "Magnolia", "NA", "Must be protected with additional coating for cleaning purposes. Coating provided by Chateau Domingue.", links.dominguePlasters, "assets/brookfield_r8_c7.png"],
+          ["", "Walls", "Hallway plaster wall", "Domingue Finishes", "Limewash Paint", "Boxwood", "NA", "Must be protected with additional coating for cleaning purposes. Coating provided by Chateau Domingue.", links.dominguePlasters, "assets/brookfield_r9_c7.png"],
+          ["", "Walls", "Hallway lacquered panels", "Benjamin Moore", "Paint / Gloss", "Avon Green HC-126", "Gloss", "To match hallway vitrines.", links.avon, "assets/brookfield_r10_c7.png"]
+        ]
+      },
+      {
+        brand: "Sant Ambroeus", branch: "sa", id: "sa-east-hampton", restaurant: "East Hampton", date: "",
+        source: "SA-East Hampton (1).xlsx",
+        rows: [
+          ["", "Dining room", "MDF Wainscotting", "Chateau Domingue", "Limewash Paint / Limewash", "Dauphine", "Limewash", "", links.dauphin, "assets/east_hampton_r3_c7.png"],
+          ["", "Dining room", "Upper Walls And Ceiling", "Benjamin Moore", "Paint / Flat Finish", "Glen Davis White", "Flat finish", "", "", "#f4eee0"],
+          ["", "Dining room", "Floors", "Fine Paints of Europe", "Paint / Hollandlac", "Brilliant 98", "Hollandlac", "E25-12.", links.fineBrilliant, "assets/east_hampton_r5_c7.png"],
+          ["", "Restrooms", "Wainscotting", "Fine Paints of Europe", "Paint / Hollandlac", "Brilliant 98", "Hollandlac", "E8-34.", links.fineBrilliant, "assets/east_hampton_r6_c7.png"],
+          ["", "Restrooms", "Upper Walls And Ceiling", "Chateau Domingue", "Limewash Paint", "Espalier", "Limewash paint", "", links.espalier, "assets/east_hampton_r7_c7.png"],
+          ["", "Back of house (BOH)", "Kitchens Throughout", "Benjamin Moore", "Paint / Semi-gloss Finish", "Decorator's White OC-149", "Semi-gloss finish", "", links.decoratorsWhite, "assets/east_hampton_r8_c7.png"],
+          ["", "Bus station area", "Kitchen Wall & Stair Wall", "Benjamin Moore", "Paint / Semi-gloss Finish", "Color Match Dauphine Lime Wash", "Semi-gloss finish", "", links.dauphin, "assets/east_hampton_r9_c7.png"],
+          ["", "Bus station area", "Millwork Walls", "Benjamin Moore", "Paint / Semi-gloss Finish", "Earthly Russet 2173-10", "Semi-gloss finish", "", links.earthlyRusset, "assets/east_hampton_r10_c7.png"],
+          ["", "Hallway", "Bus Station", "Chateau Domingue", "Limewash Paint / Belgian Satin Finish", "Panier", "Belgian satin finish", "Trim paint.", links.panier, "assets/east_hampton_r11_c7.png"],
+          ["", "Hallway", "Bathroom Doors", "Chateau Domingue", "Limewash Paint / Belgian Satin Finish", "Panier", "Belgian satin finish", "Trim paint.", links.panier, "assets/east_hampton_r12_c7.png"],
+          ["", "Dining room", "Baseboard", "Chateau Domingue", "Limewash Paint / Belgian Satin Finish", "Dauphine", "Belgian satin finish", "Trim paint.", links.dauphin, "assets/east_hampton_r13_c7.png"]
+        ]
+      },
+      {
+        brand: "Sant Ambroeus", branch: "sa", id: "sa-gelateria", restaurant: "Gelateria", date: "",
+        source: "GELATERIA.xlsx",
+        rows: [
+          ["", "Ceiling", "", "Chateau Domingue Finishes", "Paint / Lime Wash", "Brique", "Lime Wash", "Painted drywall.", links.domingueLime, "assets/gelateria_r3_c7.png"],
+          ["", "Ceiling", "Interior FOH", "Benjamin Moore", "Paint / AURA Semi-gloss", "TBD", "AURA Semi-gloss", "Painted drywall; brush painted.", "", ""],
+          ["", "Ceiling", "BOH", "Benjamin Moore", "Paint / AURA Semi-gloss", "Cream TBD", "AURA Semi-gloss", "Painted drywall; brush painted.", "", ""],
+          ["", "Ceiling", "Restroom", "Chateau Domingue Finishes", "Paint / Lime Wash", "TBD", "Lime Wash", "Painted drywall.", "", ""],
+          ["", "Walls", "Top Wall Section Through FOH", "Chateau Domingue", "Paint / Lime Wash", "Espalier", "Lime Wash", "Painted drywall.", links.domingueLime, "assets/gelateria_r7_c7.png"],
+          ["", "Walls", "Restroom", "Chateau Domingue", "Paint / Lime Wash", "TBD", "Lime Wash", "Painted drywall.", "", ""],
+          ["", "Walls", "FOH Counter / Beam Behind POS", "Benjamin Moore", "Paint / AURA Semi-gloss", "TBD", "AURA Semi-gloss; brush painted", "To be painted on top of intumescent coating.", "", ""]
+        ]
+      },
+      {
+        brand: "Sant Ambroeus", branch: "sa", id: "sa-southampton", restaurant: "Southampton", date: "",
+        source: "SA SOUTHAMPTON .xlsx",
+        rows: [
+          ["", "Dining room", "Walls", "Farrow and Ball", "Limewash / Modern Emulsion", "Dimity No. 2008", "Modern Emulsion", "", links.dimity, "assets/southampton_r3_c7.png"]
+        ]
+      },
+      {
+        brand: "Felice", branch: "fe", id: "fe-hudson", restaurant: "Hudson", date: "9/16/24",
+        source: "FELICE HUDSON PAINT SCHEDULE - SEPTEMBER 2024.pdf",
+        rows: [
+          ["", "Restaurant", "Walls", "Domingue Finishes", "Limewash", "Arcade", "Limewash", "Was matched with Benjamin Moore.", links.domingueLime, "#a89575"],
+          ["", "Restaurant", "Wainscoting", "Domingue Finishes", "Limewash", "Terre", "Limewash", "Was matched with Benjamin Moore.", links.domingueLime, "#8f825f"],
+          ["", "Restaurant", "Ceilings", "Domingue Finishes", "Limewash", "Oyster", "Limewash", "Was matched with Benjamin Moore.", links.domingueLime, "#eee7d8"]
+        ]
+      },
+      {
+        brand: "Felice", branch: "fe", id: "fe-64th", restaurant: "64th", date: "",
+        source: "64TH.xlsx",
+        rows: [
+          ["", "Trim", "", "Benjamin Moore", "Paint / Semi-gloss", "Silver Satin OC-26", "Semi-gloss", "All trim.", links.silverSatin, "assets/felice64_r3_c7.png"],
+          ["", "Walls / Doors", "", "Benjamin Moore", "Paint / Semi-gloss", "Stormy Sky 1616", "Semi-gloss", "All walls and doors.", links.stormySky, "assets/felice64_r4_c7.png"]
+        ]
+      },
+      {
+        brand: "Felice", branch: "fe", id: "fe-71st", restaurant: "71st", date: "",
+        source: "71ST.xlsx",
+        rows: [
+          ["", "Dining Room", "Tin Ceiling", "Domingue Finishes", "Limewash / Matte/Flat", "Oyster", "Matte/Flat", "", links.dominguePalette, "assets/felice71_r3_c7.png"],
+          ["", "Dining Room", "Wood Ceiling", "Domingue Finishes", "Limewash / Matte/Flat", "Arcade", "Matte/Flat", "", links.dominguePalette, "assets/felice71_r4_c7.png"],
+          ["", "Dining Room", "Electrical Doors", "Behr", "Paint / Matte/Flat", "Rustic Tobacco", "Matte/Flat", "", links.behrTobacco, "assets/felice71_r5_c7.png"],
+          ["", "Hallway", "Walls/Ceiling", "Domingue Finishes", "Limewash / Matte/Flat", "Boxwood", "Matte/Flat", "", links.dominguePalette, "assets/felice71_r6_c7.png"],
+          ["", "Lower Level", "Tin Ceiling", "Domingue Finishes", "Limewash / Matte/Flat", "Arcade", "Matte/Flat", "", links.dominguePalette, "assets/felice71_r7_c7.png"],
+          ["", "Throughout", "Walls", "Meoded and Benjamin Moore", "Plaster / Satin Finish", "Pearlas Velvet - Suede Metallic Paint; Benjamin Moore 1110 Tawny Bisque", "Satin Finish", "", links.meodedPearlas, "assets/felice71_r8_c7.png"]
+        ]
+      },
+      {
+        brand: "Felice", branch: "fe", id: "fe-83rd", restaurant: "83rd", date: "",
+        source: "83RD.xlsx",
+        rows: [
+          ["", "Walls", "Wall Stripes - White", "Benjamin Moore", "Paint / Matte", "Cedar Key OC-16", "Matte", "", "", "assets/felice83_r3_c7.png"],
+          ["", "Walls", "Wall Stripes - Green", "Benjamin Moore", "Paint / Matte", "Green Grove 2138-20", "Matte", "", "", "assets/felice83_r4_c7.png"],
+          ["", "Drapery", "Drapery Color - Green Stripes", "Domingue Finishes", "Limewash", "Boxwood", "", "Paint Can.", links.domingueLime, "assets/felice83_r5_c7.png"],
+          ["", "Walls", "Upper Walls", "Benjamin Moore", "Paint / Matte", "Turtle Green 2142-20", "Matte", "", links.turtleGreen, "assets/felice83_r6_c7.png"],
+          ["", "Walls", "Lower Wall near door to Felice bar", "Benjamin Moore", "Paint / Matte", "Aegean Olive 1491", "Matte", "", links.aegeanOlive, "assets/felice83_r7_c7.png"],
+          ["", "Ceiling", "High Ceiling", "Benjamin Moore", "Paint / Flat", "Regal Select Interior Paint N547", "Flat", "Color code Y3-0x8.000; S1-0x5.000; R3-0x1.4375.", links.regalN547, "assets/felice83_r8_c7.png"],
+          ["", "Soffit", "Soffit", "Benjamin Moore", "Paint / Matte", "Stardust 2108-40", "Matte", "", links.stardust, "assets/felice83_r9_c7.png"],
+          ["", "Furniture", "Bread Station", "Benjamin Moore", "Paint / Matte", "Stardust 2108-40", "Matte", "", links.stardust, "assets/felice83_r10_c7.png"],
+          ["", "Ceiling", "Hallway Ceiling", "Benjamin Moore", "Paint / Matte", "Stardust 2108-40", "Matte", "", links.stardust, "assets/felice83_r11_c7.png"],
+          ["", "Ceiling", "Bathroom Ceiling", "Benjamin Moore", "Paint / Matte", "Stardust 2108-40", "Matte", "", links.stardust, "assets/felice83_r12_c7.png"],
+          ["", "Doors", "Bathroom Frames and Doors", "Benjamin Moore", "Paint / Semi", "Stardust 2108-40", "Semi", "", links.stardust, "assets/felice83_r13_c7.png"],
+          ["", "Furniture", "Banquettes", "Fine Paints of Europe", "Paint / Matte", "G18750", "Matte", "", links.fpoeRetailers, ""],
+          ["", "Doors", "Door box / door to Felice bar", "Metal Paint", "Paint / Metal", "Dark Black", "Metal", "", "", ""]
+        ]
+      },
+      {
+        brand: "Felice", branch: "fe", id: "fe-roslyn", restaurant: "Roslyn", date: "",
+        source: "ROSLYN.xlsx",
+        rows: [
+          ["", "Walls", "Private Dining Room", "Domingue Finishes", "Limewash", "Chapel", "Limewash", "Solid painted.", "https://www.dominguefinishes.com/search?q=CHAPEL", "assets/felice_roslyn_r3_c7.png"],
+          ["", "Ceiling", "Throughout", "Domingue Finishes", "Limewash", "Terre", "Limewash", "Solid painted.", "https://www.dominguefinishes.com/search?q=TERRE", "assets/felice_roslyn_r4_c7.png"],
+          ["", "Walls", "Throughout", "Domingue Finishes", "Limewash", "Giza; Beeswax; Boxwood; Bastide; Cassis", "Limewash", "Paint colors in alternating stripes.", links.dominguePalette, "assets/felice_roslyn_r5_c7.png"],
+          ["", "Walls", "Throughout", "Domingue Finishes", "Limewash", "Terre", "Limewash", "Solid painted.", links.dominguePalette, "assets/felice_roslyn_r6_c7.png"],
+          ["", "Walls", "Bathroom", "Domingue Finishes", "Limewash", "Final Color TBD", "Limewash", "Solid painted.", links.dominguePalette, ""]
+        ]
+      }
+    ];
+
+    const missingSant = ["Hanley", "Lafayette-SOHO", "Madison Ave", "Palm Beach", "Regency", "Sotheby's", "West 4th"];
+
+    const summaryLocations = {
+      sa: [
+        { label: "SANT AMBROEUS BROOKFIELD", restaurant: "Brookfield" },
+        { label: "SANT AMBROEUS EAST HAMPTON", restaurant: "East Hampton" },
+        { label: "SANT AMBROEUS GELATERIA", restaurant: "Gelateria" },
+        { label: "SANT AMBROEUS SOUTHAMPTON", restaurant: "Southampton" },
+        ...missingSant.slice(0, 6).map((name) => ({ label: `SANT AMBROEUS ${name.toUpperCase()}` })),
+        { label: "SANT AMBROEUS WEST 4TH" }
+      ],
+      fe: [
+        { label: "FELICE HUDSON", restaurant: "Hudson" },
+        { label: "FELICE 64TH", restaurant: "64th" },
+        { label: "FELICE 71ST", restaurant: "71st" },
+        { label: "FELICE 83RD", restaurant: "83rd" },
+        { label: "FELICE ROSLYN", restaurant: "Roslyn" },
+        { label: "FELICE 15 GOLD" },
+        { label: "FELICE 56" },
+        { label: "FELICE MONTAGUE" },
+        { label: "FELICE PASTA BAR DUMBO" },
+        { label: "FELICE WEST PALM BEACH" },
+        { label: "FELICE BRICKELL" }
+      ]
+    };
+
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    }[char]));
+
+    const linkButton = (url, branch) => url
+      ? `<a class="website ${branch}" href="${escapeHtml(url)}" target="_blank" rel="noopener">Website</a>`
+      : "";
+
+    const swatch = (color, label) => {
+      if (!color) return "";
+      const safeLabel = escapeHtml(label || "TBD");
+      if (color === "multi") return `<div><div class="swatch multi"></div></div>`;
+      if (String(color).startsWith("assets/")) return `<div><img class="swatch-img" src="${escapeHtml(color)}" alt="${safeLabel}" /></div>`;
+      const style = color ? `style="background:${escapeHtml(color)}"` : "";
+      return `<div><div class="swatch ${color ? "" : "empty"}" ${style}></div></div>`;
+    };
+
+    const renderSummary = () => {
+      const summary = document.getElementById("summary");
+      const byRestaurant = Object.fromEntries(schedules.map((s) => [s.restaurant, s]));
+      const renderBlock = (branch, title) => `
+        <article class="summary-block ${branch}">
+          <div class="brand-title ${branch}">
+            <span><span class="brand-name">${title}</span><span class="brand-summary-label">Summary</span></span>
+            <span class="count-pill">${summaryLocations[branch].length} locations</span>
+          </div>
+          <div class="location-grid">
+            ${summaryLocations[branch].map((item) => {
+              const schedule = item.restaurant ? byRestaurant[item.restaurant] : null;
+              const status = schedule ? "available" : "missing";
+              const href = schedule ? `#${schedule.id}` : "#summary";
+              return `<a class="location-row" href="${href}" style="text-decoration:none">
+                <span><strong>${escapeHtml(item.label)}</strong></span>
+                <span class="status ${status}">${status}</span>
+              </a>`;
+            }).join("")}
+          </div>
+        </article>`;
+      summary.innerHTML = renderBlock("sa", "Sant Ambroeus") + renderBlock("fe", "Felice");
+    };
+
+    const renderToolbar = () => {
+      const label = (s) => s.branch === "fe"
+        ? `FELICE ${s.restaurant}`.replace("64th", "64TH").replace("71st", "71ST").replace("83rd", "83RD").replace("Hudson", "HUDSON").replace("Roslyn", "ROSLYN")
+        : `SANT AMBROEUS ${s.restaurant.toUpperCase()}`;
+      const row = (branch) => schedules.filter((s) => s.branch === branch).map((s) =>
+        `<a class="chip ${s.branch}" href="#${s.id}">${escapeHtml(label(s))}</a>`
+      ).join("");
+      document.getElementById("toolbar").innerHTML = `<div class="toolbar-row">${row("sa")}</div><div class="toolbar-row">${row("fe")}</div>`;
+    };
+
+    const renderCard = (schedule) => `
+      <article class="schedule-card ${schedule.branch}" id="${schedule.id}">
+        <header class="schedule-head ${schedule.branch}">
+          <div>
+            <h3 class="logo-word ${schedule.branch}">${escapeHtml(schedule.branch === "fe" ? `FELICE ${schedule.restaurant}`.replace("64th", "64TH").replace("71st", "71ST").replace("83rd", "83RD").replace("Hudson", "HUDSON").replace("Roslyn", "ROSLYN") : `Sant Ambroeus ${schedule.restaurant}`)}</h3>
+          </div>
+          ${schedule.date ? `<div class="date-badge">${escapeHtml(schedule.date)}</div>` : ""}
+        </header>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:90px">Location</th>
+                <th style="width:118px">Area</th>
+                <th style="width:110px">Vendor</th>
+                <th style="width:118px">Paint Type and Finish</th>
+                <th style="width:122px">Paint Color</th>
+                <th style="width:104px">Picture</th>
+                <th style="width:74px">Link</th>
+                <th style="width:124px">Directions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${schedule.rows.map((row) => `
+                <tr>
+                  <td class="center">${escapeHtml(row[1])}</td>
+                  <td class="center">${escapeHtml(row[2])}</td>
+                  <td class="vendor center">${escapeHtml(row[3])}</td>
+                  <td class="center">${escapeHtml(row[4])}</td>
+                  <td class="color">${escapeHtml(row[5])}</td>
+                  <td class="center"><div class="paint-chip">${swatch(row[9], row[5])}</div></td>
+                  <td class="center">${linkButton(row[8], schedule.branch)}</td>
+                  <td class="directions">${escapeHtml(row[7])}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </article>`;
+
+    const renderSchedules = () => {
+      document.getElementById("sa-cards").innerHTML = schedules.filter((s) => s.branch === "sa").map(renderCard).join("");
+      document.getElementById("fe-cards").innerHTML = schedules.filter((s) => s.branch === "fe").map(renderCard).join("");
+    };
+
+    renderSummary();
+    renderToolbar();
+    renderSchedules();
+  </script>
+</body>
+</html>
